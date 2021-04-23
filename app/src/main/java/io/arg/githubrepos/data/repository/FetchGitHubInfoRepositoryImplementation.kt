@@ -5,6 +5,8 @@ import io.arg.githubrepos.data.server.model.CommitInfo
 import io.arg.githubrepos.data.server.model.GeneralCommitInfo
 import io.arg.githubrepos.data.server.model.GitHubRepositoryInfo
 import io.arg.githubrepos.data.server.model.GitHubRepositoryResponse
+import io.arg.githubrepos.realm.RealmHelper.Companion.insertGutHubReposIntoRealm
+import io.arg.githubrepos.realm.RealmHelper.Companion.mapToRealm
 
 class FetchGitHubInfoRepositoryImplementation(private val api: GitHubRepositoryApi) : FetchGitHubInfoRepository {
 
@@ -18,7 +20,12 @@ class FetchGitHubInfoRepositoryImplementation(private val api: GitHubRepositoryA
         }
         commitInfoList.sortedByDescending { it.date }
 
-        return GitHubRepositoryResponse(info, commitInfoList)
+        val response = GitHubRepositoryResponse(info, commitInfoList)
+
+        // Save results into realm
+        insertGutHubReposIntoRealm(mapToRealm(response))
+
+        return response
     }
 
 

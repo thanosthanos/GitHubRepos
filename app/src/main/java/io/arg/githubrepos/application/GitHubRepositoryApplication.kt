@@ -6,6 +6,9 @@ import android.net.ConnectivityManager
 import io.arg.githubrepos.di.networkModule
 import io.arg.githubrepos.di.repositoryModule
 import io.arg.githubrepos.di.viewModelModule
+import io.arg.githubrepos.realm.RepoInfoModule
+import io.realm.Realm
+import io.realm.RealmConfiguration
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -24,7 +27,22 @@ class GitHubRepositoryApplication: Application() {
         super.onCreate()
 
         ctx = applicationContext
+        initRealm()
         startKoin()
+    }
+
+    private fun initRealm() {
+
+        // Configure Realm
+        Realm.init(ctx)
+        val realmConfiguration = RealmConfiguration.Builder()
+            .name("repoinfo.realm")
+            .schemaVersion(1)
+            .modules(RepoInfoModule())
+            .compactOnLaunch()
+            .build()
+
+        Realm.setDefaultConfiguration(realmConfiguration)
     }
 
     private fun startKoin() {
