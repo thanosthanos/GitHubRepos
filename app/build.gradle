@@ -69,4 +69,13 @@ dependencies {
     implementation "org.koin:koin-androidx-scope:2.2.0-rc-4"
     implementation "org.koin:koin-androidx-viewmodel:2.2.0-rc-4"
     implementation "org.koin:koin-androidx-ext:2.2.0-rc-4"
+
+    //Coroutines
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.4.2'
+
+    //LifeCycle
+    implementation 'androidx.lifecycle:lifecycle-common:2.3.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.3.1'
+    implementation 'android.arch.lifecycle:extensions:2.2.0'
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.3.1'
 }

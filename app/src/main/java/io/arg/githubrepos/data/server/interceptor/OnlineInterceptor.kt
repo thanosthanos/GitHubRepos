@@ -1,8 +1,8 @@
 package io.arg.githubrepos.data.server.interceptor
 
 import io.arg.githubrepos.application.GitHubRepositoryApplication.Companion.isInternetAvailable
-import io.arg.githubrepos.data.server.api.RepositoryApi.CACHE_CONTROL_HEADER
-import io.arg.githubrepos.data.server.api.RepositoryApi.HEADER_PRAGMA
+import io.arg.githubrepos.data.server.api.GitHubRepositoryApi.CACHE_CONTROL_HEADER
+import io.arg.githubrepos.data.server.api.GitHubRepositoryApi.HEADER_PRAGMA
 import io.arg.githubrepos.exception.NoConnectivityException
 import okhttp3.CacheControl
 import okhttp3.Interceptor

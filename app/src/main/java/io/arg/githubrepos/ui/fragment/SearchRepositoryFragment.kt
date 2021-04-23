@@ -11,10 +11,14 @@ import androidx.fragment.app.Fragment
 import io.arg.githubrepos.R
 import io.arg.githubrepos.databinding.FragmentSearchReposBinding
 import io.arg.githubrepos.exception.NoConnectivityException
+import io.arg.githubrepos.viewmodel.GitHubInformationViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.experimental.property.inject
 
 class SearchRepositoryFragment: Fragment() {
 
     private lateinit var binding: FragmentSearchReposBinding
+    private val viewModel by viewModel<GitHubInformationViewModel>()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -22,6 +26,9 @@ class SearchRepositoryFragment: Fragment() {
         binding = FragmentSearchReposBinding.inflate(inflater, container, false)
 
         initViews()
+
+        // TODO delete
+        getData("bright", "shouldko")
 
         return binding.root
     }
@@ -35,6 +42,24 @@ class SearchRepositoryFragment: Fragment() {
         addShowRepositoryInfoFragment()
     }
 
+    private fun getData(owner: String, repository: String) {
+
+        viewModel.getRepositoryInfo(owner = owner, repositoryString = repository).observe(viewLifecycleOwner, androidx.lifecycle.Observer { resource ->
+            run {
+                resource.onLoading {
+                    showLoadingView(show = true)
+                }
+                .onSuccess { repositoryInfo ->
+                    showRepositoryDetails()
+                }
+                .onFailure { error: Throwable ->
+                    showError(error = error)
+                }
+            }
+        })
+
+    }
+
     private fun addShowRepositoryInfoFragment() {
         val showRepositoryInfoFragment = ShowRepositoryInfoFragment()
         val transaction = childFragmentManager.beginTransaction()
@@ -42,12 +67,19 @@ class SearchRepositoryFragment: Fragment() {
         transaction.commit()
     }
 
-    private fun showLoadingView() {
-        binding.progressBar.visibility = VISIBLE
-        binding.showRepositoryInfoLayout.visibility = GONE
+    private fun showLoadingView(show: Boolean) {
+        if(show) {
+            binding.progressBar.visibility = VISIBLE
+            binding.showRepositoryInfoLayout.visibility = GONE
+        } else {
+            binding.progressBar.visibility = GONE
+            binding.showRepositoryInfoLayout.visibility = VISIBLE
+        }
     }
 
     private fun showRepositoryDetails() {
+        showLoadingView(show = false)
+
         // TODO
     }
 

@@ -10,7 +10,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 /**
  * Basic API with simple online caching
  */
-object RepositoryApi {
+object GitHubRepositoryApi {
 
     private const val baseUrl = "https://api.github.com/"
     private const val cacheSize = (5 * 1024 * 1024).toLong()
@@ -30,8 +30,8 @@ object RepositoryApi {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-    fun getRepositoryApi(): RepositoryService {
-        return retrofit.create(RepositoryService::class.java)
+    fun getRepositoryApi(): GitHubRepositoryService {
+        return retrofit.create(GitHubRepositoryService::class.java)
     }
 
 }

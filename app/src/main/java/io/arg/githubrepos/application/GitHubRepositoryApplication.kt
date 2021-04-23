@@ -4,6 +4,8 @@ import android.app.Application
 import android.content.Context
 import android.net.ConnectivityManager
 import io.arg.githubrepos.di.networkModule
+import io.arg.githubrepos.di.repositoryModule
+import io.arg.githubrepos.di.viewModelModule
 import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 
@@ -29,7 +31,7 @@ class GitHubRepositoryApplication: Application() {
 
         startKoin {
             androidContext(ctx)
-            val modules = listOf(networkModule)
+            val modules = listOf(viewModelModule, repositoryModule, networkModule)
             modules(modules)
         }
     }
