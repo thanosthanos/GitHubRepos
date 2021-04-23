@@ -8,12 +8,15 @@ import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import io.arg.githubrepos.R
+import io.arg.githubrepos.data.server.model.GeneralCommitInfo
+import io.arg.githubrepos.data.server.model.GitHubRepositoryResponse
 import io.arg.githubrepos.databinding.FragmentSearchReposBinding
 import io.arg.githubrepos.exception.NoConnectivityException
+import io.arg.githubrepos.ui.adapter.RepositoriesCommitsAdapter
 import io.arg.githubrepos.viewmodel.GitHubInformationViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.experimental.property.inject
 
 class SearchRepositoryFragment: Fragment() {
 
@@ -27,19 +30,23 @@ class SearchRepositoryFragment: Fragment() {
 
         initViews()
 
-        // TODO delete
-        getData("bright", "shouldko")
-
         return binding.root
     }
 
     private fun initViews() {
-
         binding.searchButton.setOnClickListener {
-            // TODO view model
+            searchRepo(term = binding.searchRepoEditText.text.toString())
+        }
+    }
+
+    private fun searchRepo(term: String) {
+        val valuesArray = term.split("/").toTypedArray()
+        if(valuesArray.size != 2) {
+            Toast.makeText(context, getString(R.string.error_wrong_format), Toast.LENGTH_LONG).show()
+            return
         }
 
-        addShowRepositoryInfoFragment()
+        getData(valuesArray[0], valuesArray[1])
     }
 
     private fun getData(owner: String, repository: String) {
@@ -49,8 +56,8 @@ class SearchRepositoryFragment: Fragment() {
                 resource.onLoading {
                     showLoadingView(show = true)
                 }
-                .onSuccess { repositoryInfo ->
-                    showRepositoryDetails()
+                .onSuccess { response ->
+                    showRepositoryDetails(response = response)
                 }
                 .onFailure { error: Throwable ->
                     showError(error = error)
@@ -60,32 +67,32 @@ class SearchRepositoryFragment: Fragment() {
 
     }
 
-    private fun addShowRepositoryInfoFragment() {
-        val showRepositoryInfoFragment = ShowRepositoryInfoFragment()
-        val transaction = childFragmentManager.beginTransaction()
-        transaction.replace(R.id.showRepositoryInfoLayout, showRepositoryInfoFragment)
-        transaction.commit()
-    }
-
     private fun showLoadingView(show: Boolean) {
         if(show) {
             binding.progressBar.visibility = VISIBLE
-            binding.showRepositoryInfoLayout.visibility = GONE
+            binding.viewGroup.visibility = GONE
         } else {
             binding.progressBar.visibility = GONE
-            binding.showRepositoryInfoLayout.visibility = VISIBLE
+            binding.viewGroup.visibility = VISIBLE
         }
     }
 
-    private fun showRepositoryDetails() {
+    private fun showRepositoryDetails(response: GitHubRepositoryResponse) {
         showLoadingView(show = false)
 
-        // TODO
+        binding.repoTitleTextView.text = response.info.id
+        setAdapter(list = response.commits)
+    }
+
+    private fun setAdapter(list: List<GeneralCommitInfo>) {
+        val adapter = RepositoriesCommitsAdapter(context = requireContext(), commitsList = list)
+        binding.recyclerView.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerView.adapter = adapter
     }
 
     private fun showError(error: Throwable) {
         binding.progressBar.visibility = GONE
-        binding.showRepositoryInfoLayout.visibility = GONE
+        binding.viewGroup.visibility = GONE
 
         when (error) {
             is NoConnectivityException -> {

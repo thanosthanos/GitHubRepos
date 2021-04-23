@@ -4,4 +4,5 @@
     <string name="search">search</string>
     <string name="error_no_internet">No internet connection!</string>
     <string name="error_general">Could not fetch repositories, please try again!</string>
+    <string name="error_wrong_format">Please enter owner and repository in the correct format!</string>
 </resources>
